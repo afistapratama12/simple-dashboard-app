@@ -28,6 +28,7 @@ export default function ResetPassword({ params }: { params: Promise<{ token: str
       setSuccess(true);
       setTimeout(() => router.push('/login'), 3000);
     } catch (err) {
+      console.error('Failed to reset password', err);
       setError('Failed to reset password. Please try again.');
     }
   };

@@ -40,6 +40,7 @@ export default function Register() {
       await register(firstName, lastName, email, password);
       router.push('/verify-email');
     } catch (err) {
+      console.error('Registration failed', err);
       setError('Registration failed. Please try again.');
     } finally {
       setLoading(false);

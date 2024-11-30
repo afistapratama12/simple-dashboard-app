@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { validateToken } from '@/utils/api';
 import Cookies from 'js-cookie';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart"
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 
 // Dummy user data
 const users = [
@@ -38,6 +38,7 @@ export default function Dashboard() {
         await validateToken();
         setLoading(false);
       } catch (error) {
+        console.error(error);
         router.push('/login');
       }
     };

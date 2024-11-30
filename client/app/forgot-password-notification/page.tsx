@@ -4,7 +4,7 @@ export default function ForgotPasswordNotification() {
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Check Your Email</h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            We've sent a password reset link to your email address. Please check your inbox and click the reset button to set a new password.
+            We&apos;ve sent a password reset link to your email address. Please check your inbox and click the reset button to set a new password.
           </p>
         </div>
       </div>

@@ -20,6 +20,7 @@ export default function ForgotPassword() {
       setSuccess(true);
       router.push('/forgot-password-notification')
     } catch (err) {
+      console.error('Failed to process your request', err);
       setError('Failed to process your request. Please try again.');
     }
   };

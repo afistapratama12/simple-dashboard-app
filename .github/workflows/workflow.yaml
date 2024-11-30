@@ -1,16 +1,18 @@
 name: Setup Server and Client
+
 on:
   pull_request:
     types:
-    - closed
+      - closed
     branches:
-    - main
-  branches:
-    - main
+      - main
+  push:
+    branches:
+      - main
 
 jobs:
   # testing in path /server using go
-  server:
+  server-test-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,14 +21,14 @@ jobs:
         with:
           go-version: 1.23
       - name: Install dependencies
-        run: cd server && go mod download
+        run: cd server && go mod tidy
       - name: Test
-        run: cd server && go test -v
+        run: cd server && go test ./... -v
       - name: Lint
         run: cd server && go fmt ./...
 
   # testing in path /client using nodejs yarn
-  client:
+  client-test-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

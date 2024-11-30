@@ -17,6 +17,7 @@ export default function VerifyToken({ params }: { params: Promise<{ token: strin
         setMessage('Email verified successfully. Redirecting to dashboard...');
         setTimeout(() => router.push('/dashboard'), 3000);
       } catch (error) {
+        console.error('Email verification failed', error);
         setMessage('Email verification failed. Please try again or contact support.');
       }
     };

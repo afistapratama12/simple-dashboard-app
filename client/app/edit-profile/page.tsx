@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { editUser, getUserProfile } from '@/utils/api';
 import Link from 'next/link';
 
@@ -20,7 +19,6 @@ export default function EditProfile() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -31,6 +29,7 @@ export default function EditProfile() {
           ...profile,
         }));
       } catch (err) {
+        console.error("Failed to fetch user profile", err);
         setError('Failed to fetch user profile');
       }
     };
@@ -49,7 +48,7 @@ export default function EditProfile() {
     setSuccess(false);
 
     try {
-      const { email, ...editableData } = userData;
+      const { ...editableData } = userData;
       await editUser(editableData);
       setSuccess(true);
       // Refetch user data
@@ -61,6 +60,7 @@ export default function EditProfile() {
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
+      console.error('Failed to update profile', err);
       setError('Failed to update profile. Please try again.');
     }
   };
