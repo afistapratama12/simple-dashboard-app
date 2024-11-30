@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+  # running using postgres image
+  db:
+    image: postgres
+    container_name: db
+    restart: on-failure
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    networks:
+      - app-network
+
+  minio:
+    container_name: minio
+    image: minio/minio
+    restart: on-failure
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    command: server /data --console-address ":9001"
+
+  server-api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: server-api
+    environment:
+      - APP_ENV=development
+      - PORT=8080
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=postgres
+      - FROM_EMAIL=afistasyahjaya@gmail.com
+    depends_on:
+      - db
+    networks:
+      - app-network
+  
+  client-app:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    container_name: client-app
+    depends_on:
+      - server-api
+    networks:
+      - app-network
+  
+networks:
+  app-network:
+    driver: bridge
