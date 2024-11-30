@@ -115,9 +115,11 @@ func (s *authService) Register(ctx context.Context, req request.RegisterRequest)
 	return nil
 }
 
+var ValidateToken = helper.ValidateToken
+
 func (s *authService) VerifyEmail(ctx context.Context, req request.VerifyEmailRequest) (res response.LoginResponse, err error) {
 	// verify token
-	claims, err := helper.ValidateToken(req.Token)
+	claims, err := ValidateToken(req.Token)
 	if err != nil {
 		return
 	}
@@ -151,11 +153,6 @@ func (s *authService) VerifyEmail(ctx context.Context, req request.VerifyEmailRe
 }
 
 func (s *authService) NotifForgotPassword(ctx context.Context, req request.ResetPasswordRequest) error {
-	// terima email.
-	// check email ada di db atau tidak
-
-	// kirim email reset password
-
 	user, err := s.userRepo.FindByEmail(ctx, req.Email)
 	if err != nil && err.Error() != "record not found" {
 		return err
@@ -182,7 +179,7 @@ func (s *authService) NotifForgotPassword(ctx context.Context, req request.Reset
 
 func (s *authService) ResetPassword(ctx context.Context, req request.ResetPasswordConfirmRequest) error {
 	// verify token
-	claims, err := helper.ValidateToken(req.Token)
+	claims, err := ValidateToken(req.Token)
 	if err != nil {
 		return err
 	}

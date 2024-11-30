@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"gopkg.in/gomail.v2"
 )
 
 var _ = godotenv.Load()
@@ -16,8 +17,10 @@ var _ = godotenv.Load()
 func main() {
 	cfg := config.InitConfig()
 
+	dialer := gomail.NewDialer("smtp.gmail.com", 587, cfg.Env.EmailUsername, cfg.Env.AppPass)
+
 	userRepo := repository.NewUserRepo(cfg.DB)
-	notifRepo := repository.NewNotifRepo(cfg.Env)
+	notifRepo := repository.NewNotifRepo(cfg.Env, dialer)
 
 	authSvc := service.NewAuthService(cfg.Env, userRepo, notifRepo)
 	userSvc := service.NewUserService(userRepo)

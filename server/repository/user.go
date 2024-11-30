@@ -26,22 +26,30 @@ func NewUserRepo(db *gorm.DB) UserRepo {
 
 func (r *userRepo) FindByID(ctx context.Context, id string) (model.User, error) {
 	var user model.User
-	err := r.DB.Where("id = ?", id).First(&user).Error
+	err := r.DB.WithContext(ctx).
+		Where("id = ?", id).
+		First(&user).Error
 	return user, err
 }
 
 func (r *userRepo) FindByEmail(ctx context.Context, email string) (model.User, error) {
 	var user model.User
-	err := r.DB.Where("email = ?", email).First(&user).Error
+	err := r.DB.WithContext(ctx).
+		Where("email = ?", email).
+		First(&user).Error
 	return user, err
 }
 
 func (r *userRepo) UpdateByID(ctx context.Context, id string, updates map[string]interface{}) error {
-	err := r.DB.Model(&model.User{}).Where("id = ?", id).Updates(&updates).Error
+	err := r.DB.WithContext(ctx).
+		Model(&model.User{}).
+		Where("id = ?", id).
+		Updates(&updates).Error
 	return err
 }
 
 func (r *userRepo) Create(ctx context.Context, user model.User) error {
-	err := r.DB.Create(&user).Error
+	err := r.DB.WithContext(ctx).
+		Create(&user).Error
 	return err
 }

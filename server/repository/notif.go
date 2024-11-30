@@ -12,13 +12,19 @@ type NotifRepo interface {
 }
 
 type notifRepo struct {
-	env config.ENV
+	env    config.ENV
+	dialer Dialer
 }
 
-func NewNotifRepo(env config.ENV) NotifRepo {
+func NewNotifRepo(env config.ENV, dialer Dialer) NotifRepo {
 	return &notifRepo{
-		env: env,
+		env:    env,
+		dialer: dialer,
 	}
+}
+
+type Dialer interface {
+	DialAndSend(m ...*gomail.Message) error
 }
 
 func (r *notifRepo) NotifEmail(subject string, to []string, body string) error {
@@ -28,9 +34,7 @@ func (r *notifRepo) NotifEmail(subject string, to []string, body string) error {
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/html", body)
 
-	d := gomail.NewDialer("smtp.gmail.com", 587, r.env.EmailUsername, r.env.AppPass)
-
-	if err := d.DialAndSend(msg); err != nil {
+	if err := r.dialer.DialAndSend(msg); err != nil {
 		return err
 	}
 

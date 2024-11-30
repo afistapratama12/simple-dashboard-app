@@ -16,3 +16,7 @@ run-server:
 
 run-client:
 	cd client && yarn dev
+
+test-cover:
+	cd server && go test -coverprofile=coverage.out ./...
+	cd server && go tool cover -html=coverage.out

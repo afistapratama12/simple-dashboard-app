@@ -1,6 +1,4 @@
-name:  Setip server and client for Unit testing and linting
-
-  # trigger when set tags
+name: Setup Server and Client
 on:
   pull_request:
     types:
@@ -20,6 +18,8 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.23
+      - name: Install dependencies
+        run: cd server && go mod download
       - name: Test
         run: cd server && go test -v
       - name: Lint
