@@ -39,11 +39,12 @@ func GenerateToken(userID, email string, keepSignIn bool) (string, error) {
 }
 
 func ValidateToken(tknStr string) (*model.Claims, error) {
-	claims := &model.Claims{}
+	claimsData := &model.Claims{}
 
-	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
+	tkn, err := jwt.Parse(tknStr, func(token *jwt.Token) (interface{}, error) {
 		return []byte(jwtKey), nil
 	})
+
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
 			return nil, err
@@ -55,5 +56,21 @@ func ValidateToken(tknStr string) (*model.Claims, error) {
 		return nil, errors.New("invalid token")
 	}
 
-	return claims, nil
+	if claims, ok := tkn.Claims.(jwt.MapClaims); ok && tkn.Valid {
+		if _, ok := claims["user_id"]; ok {
+			claimsData.UserID = claims["user_id"].(string)
+		}
+
+		if _, ok := claims["email"]; ok {
+			claimsData.Email = claims["email"].(string)
+		}
+
+		if _, ok := claims["exp"]; ok {
+			claimsData.ExpiresAt = int64(claims["exp"].(float64))
+		}
+	} else {
+		return nil, errors.New("invalid token")
+	}
+
+	return claimsData, nil
 }

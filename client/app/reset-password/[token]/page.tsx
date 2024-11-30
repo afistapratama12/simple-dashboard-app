@@ -1,15 +1,17 @@
 'use client'
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { resetPassword } from '@/utils/api';
 
-export default function ResetPassword({ params }: { params: { token: string } }) {
+export default function ResetPassword({ params }: { params: Promise<{ token: string }> }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+
+  const { token } = React.use(params);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ export default function ResetPassword({ params }: { params: { token: string } })
     }
 
     try {
-      await resetPassword(params.token, password);
+      await resetPassword(token, password);
       setSuccess(true);
       setTimeout(() => router.push('/login'), 3000);
     } catch (err) {

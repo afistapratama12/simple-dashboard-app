@@ -1,17 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { verifyEmail } from '@/utils/api';
 
-export default function VerifyToken({ params }: { params: { token: string } }) {
+export default function VerifyToken({ params }: { params: Promise<{ token: string }> }) {
   const [message, setMessage] = useState('Verifying your email...');
   const router = useRouter();
+
+  const { token } = React.use(params);
 
   useEffect(() => {
     const verify = async () => {
       try {
-        await verifyEmail(params.token);
+        await verifyEmail(token);
         setMessage('Email verified successfully. Redirecting to dashboard...');
         setTimeout(() => router.push('/dashboard'), 3000);
       } catch (error) {
@@ -20,7 +22,7 @@ export default function VerifyToken({ params }: { params: { token: string } }) {
     };
 
     verify();
-  }, [params.token, router]);
+  }, [token, router]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

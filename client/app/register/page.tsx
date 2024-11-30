@@ -13,6 +13,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [verifyPassword, setVerifyPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,11 +34,15 @@ export default function Register() {
       return;
     }
 
+    setLoading(true);
+
     try {
       await register(firstName, lastName, email, password);
       router.push('/verify-email');
     } catch (err) {
       setError('Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -141,8 +146,9 @@ export default function Register() {
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                Register
+                {loading ? 'Loading...' : 'Register'}
               </button>
+
             </div>
           </form>
 

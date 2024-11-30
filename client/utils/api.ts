@@ -83,6 +83,7 @@ export const editUser = async (userData: {
 
 export const getUserProfile = async () => {
   const token = Cookies.get('token');
+
   if (!token) {
     throw new Error('No token found');
   }
@@ -90,5 +91,10 @@ export const getUserProfile = async () => {
   const response = await api.get('/users/profile', {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return response.data;
+
+  if (response.status === 200) {
+    return response.data.data;
+  }
+
+  throw new Error('Failed to fetch user profile');
 };

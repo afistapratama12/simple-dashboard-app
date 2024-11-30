@@ -31,6 +31,23 @@ func main() {
 
 	r.Use(middleware.CORSMiddleware())
 
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status": gin.H{
+				"server": true,
+				"database": func() bool {
+					sqlDB, err := cfg.DB.DB()
+					if err != nil {
+						return false
+					}
+
+					err = sqlDB.Ping()
+					return err == nil
+				}(),
+			},
+		})
+	})
+
 	v1 := r.Group("/v1")
 	{
 		v1.POST("/register", authHandler.Register)

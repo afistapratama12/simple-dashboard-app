@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { editUser, getUserProfile } from '@/utils/api';
+import Link from 'next/link';
 
 export default function EditProfile() {
   const [userData, setUserData] = useState({
@@ -25,7 +26,10 @@ export default function EditProfile() {
     const fetchUserProfile = async () => {
       try {
         const profile = await getUserProfile();
-        setUserData(profile);
+        setUserData(prevData => ({
+          ...prevData,
+          ...profile,
+        }));
       } catch (err) {
         setError('Failed to fetch user profile');
       }
@@ -34,7 +38,7 @@ export default function EditProfile() {
     fetchUserProfile();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setUserData(prevData => ({ ...prevData, [name]: value }));
   };
@@ -48,7 +52,14 @@ export default function EditProfile() {
       const { email, ...editableData } = userData;
       await editUser(editableData);
       setSuccess(true);
-      window.location.reload()
+      // Refetch user data
+      const updatedProfile = await getUserProfile();
+      setUserData(prevData => ({
+        ...prevData,
+        ...updatedProfile,
+      }));
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError('Failed to update profile. Please try again.');
     }
@@ -58,6 +69,14 @@ export default function EditProfile() {
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
         <div className="px-4 py-5 sm:p-6">
+          <div className="mb-6">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              &larr; Back to Dashboard
+            </Link>
+          </div>
           <h2 className="text-lg leading-6 font-medium text-gray-900">Edit Profile</h2>
           <form onSubmit={handleSubmit} className="mt-5 space-y-6">
             <div>
@@ -70,7 +89,7 @@ export default function EditProfile() {
                 id="email"
                 value={userData.email}
                 readOnly
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 text-black rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-50"
               />
             </div>
             <div>
@@ -83,7 +102,7 @@ export default function EditProfile() {
                 id="first_name"
                 value={userData.first_name}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 text-black rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div>
@@ -96,7 +115,7 @@ export default function EditProfile() {
                 id="last_name"
                 value={userData.last_name}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 text-black rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div>
@@ -109,7 +128,7 @@ export default function EditProfile() {
                 id="phone_number"
                 value={userData.phone_number}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 text-black rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div>
@@ -122,7 +141,7 @@ export default function EditProfile() {
                 id="address"
                 value={userData.address}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 text-black rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div>
@@ -135,7 +154,7 @@ export default function EditProfile() {
                 id="address2"
                 value={userData.address2}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 text-black rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div>
@@ -148,7 +167,7 @@ export default function EditProfile() {
                 id="city"
                 value={userData.city}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 text-black rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div>
@@ -161,7 +180,7 @@ export default function EditProfile() {
                 id="state"
                 value={userData.state}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 text-black rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div>
@@ -174,7 +193,7 @@ export default function EditProfile() {
                 id="zipcode"
                 value={userData.zipcode}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 text-black rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div>
@@ -187,7 +206,7 @@ export default function EditProfile() {
                 id="profile_photo_url"
                 value={userData.profile_photo_url}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 text-black rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <div>

@@ -26,29 +26,23 @@ func AuthMiddleware() gin.HandlerFunc {
 		var claims = &model.Claims{}
 		var err error
 
-		if len(headerData) == 1 {
-			claims, err = helper.ValidateToken(headerData[0])
-
-			if err != nil {
-				wrapper.ResponseJSONWithMessage(c, http.StatusUnauthorized, "invalid token")
-				c.Abort()
-				return
-			}
-		}
-
-		if len(headerData) == 2 && strings.ToLower(headerData[0]) != "bearer" {
+		if strings.ToLower(headerData[0]) == "bearer" && len(headerData) == 2 {
 			claims, err = helper.ValidateToken(headerData[1])
-
-			if err != nil {
-				wrapper.ResponseJSONWithMessage(c, http.StatusUnauthorized, "invalid token")
-				c.Abort()
-				return
-			}
+		} else if len(headerData) == 1 {
+			claims, err = helper.ValidateToken(headerData[0])
 		}
 
+		if err != nil {
+			wrapper.ResponseJSONWithMessage(c, http.StatusUnauthorized, "invalid token")
+			c.Abort()
+			return
+		}
+
+		c.Set("claims", claims)
 		c.Set("user_id", claims.UserID)
 		c.Set("email", claims.Email)
 
 		c.Next()
+
 	}
 }
