@@ -2,13 +2,13 @@ name:  Setip server and client for Unit testing and linting
 
   # trigger when set tags
 on:
-  merge:
-    branches:
-      - main
-  # pull request all branch to main
   pull_request:
+    types:
+    - closed
     branches:
-      - main
+    - main
+  branches:
+    - main
 
 jobs:
   # testing in path /server using go
