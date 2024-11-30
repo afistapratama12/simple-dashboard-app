@@ -1,0 +1,469 @@
+definitions:
+  request.EditUserRequest:
+    properties:
+      address:
+        type: string
+      address2:
+        type: string
+      city:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      phone_number:
+        type: string
+      profile_photo_url:
+        type: string
+      state:
+        type: string
+      zip_code:
+        type: string
+    required:
+    - first_name
+    - last_name
+    type: object
+  request.LoginRequest:
+    properties:
+      email:
+        type: string
+      keep_sign_in:
+        type: boolean
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  request.RegisterRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - password
+    type: object
+  request.ResetPasswordConfirmRequest:
+    properties:
+      password:
+        type: string
+      token:
+        type: string
+    required:
+    - password
+    - token
+    type: object
+  request.ResetPasswordRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  request.VerifyEmailRequest:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  response.LoginResponse:
+    properties:
+      email:
+        type: string
+      token:
+        type: string
+      user_id:
+        type: string
+    type: object
+  wrapper.ResponseAPI:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+info:
+  contact:
+    email: pratama.otori.12@gmail.com
+    name: Afista pratama
+    url: https://linkedin.com/in/afistapratama
+  description: This is a service / server simple dashboard
+  title: Service / Server Simple Dashboard
+  version: "1.0"
+paths:
+  /v1/login:
+    post:
+      consumes:
+      - application/json
+      description: Login User
+      operationId: login
+      parameters:
+      - description: Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.LoginResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Login
+      tags:
+      - Auth
+  /v1/notif-forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Notif Forgot Password
+      operationId: notif-forgot-password
+      parameters:
+      - description: Reset Password Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Notif Forgot Password
+      tags:
+      - Auth
+  /v1/register:
+    post:
+      consumes:
+      - application/json
+      description: Register User
+      operationId: register
+      parameters:
+      - description: Register Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Register
+      tags:
+      - Auth
+  /v1/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Reset Password
+      operationId: reset-password
+      parameters:
+      - description: Reset Password Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.ResetPasswordConfirmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Reset Password
+      tags:
+      - Auth
+  /v1/users/edit:
+    put:
+      consumes:
+      - application/json
+      description: Edit User Login
+      operationId: edit-user-login
+      parameters:
+      - description: Edit User Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.EditUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Edit User Login
+      tags:
+      - Users
+  /v1/users/profile:
+    get:
+      consumes:
+      - application/json
+      description: Profile User Login
+      operationId: profile-user-login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Profile User Login
+      tags:
+      - Users
+  /v1/validate-token:
+    get:
+      consumes:
+      - application/json
+      description: Validate Token
+      operationId: validate-token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Validate Token
+      tags:
+      - Auth
+  /v1/verify-email:
+    post:
+      consumes:
+      - application/json
+      description: Verify Email
+      operationId: verify-email
+      parameters:
+      - description: Verify Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.VerifyEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/wrapper.ResponseAPI'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Verify Email
+      tags:
+      - Auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

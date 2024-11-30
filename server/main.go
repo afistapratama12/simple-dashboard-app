@@ -10,10 +10,25 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gopkg.in/gomail.v2"
+
+	_ "simple-dashboard-server/docs"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 var _ = godotenv.Load()
 
+// @title Service / Server Simple Dashboard
+// @version 1.0
+// @description This is a service / server simple dashboard
+// @contact.name Afista pratama
+// @contact.url https://linkedin.com/in/afistapratama
+// @contact.email pratama.otori.12@gmail.com
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @value Bearer <token>
 func main() {
 	cfg := config.InitConfig()
 
@@ -47,6 +62,9 @@ func main() {
 			},
 		})
 	})
+
+	// add swagger
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	v1 := r.Group("/v1")
 	{
