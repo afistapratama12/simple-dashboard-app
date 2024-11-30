@@ -32,10 +32,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Node.js 12.x
+      - name: Set up Node.js 22.x
         uses: actions/setup-node@v2
         with:
-          node-version: 12.x
+          node-version: 22.x
       - name: Install dependencies
         run: cd client && yarn install
       - name: Test
