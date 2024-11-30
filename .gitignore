@@ -7,6 +7,4 @@
 */coverage.out
 
 */.env
-
-./server/.env
-./client/.env
+*/.env.*
