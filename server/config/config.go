@@ -1,11 +1,15 @@
 package config
 
 import (
+	"database/sql"
+	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 type Config struct {
@@ -19,6 +23,7 @@ type ENV struct {
 	DBPass        string
 	DBName        string
 	DBPort        string
+	DBHostProd    string
 	BaseClientURL string
 	JWTSecret     string
 	AppENV        string
@@ -31,11 +36,12 @@ var _ = godotenv.Load()
 
 func InitConfig() Config {
 	var env = ENV{
-		DBHost: getEnv("DB_HOST", "localhost"),
-		DBUser: getEnv("DB_USER", "postgres"),
-		DBPass: getEnv("DB_PASS", "postgres"),
-		DBName: getEnv("DB_NAME", "postgres"),
-		DBPort: getEnv("DB_PORT", "5432"),
+		DBHost:     getEnv("DB_HOST", "localhost"),
+		DBUser:     getEnv("DB_USER", "postgres"),
+		DBPass:     getEnv("DB_PASS", "postgres"),
+		DBName:     getEnv("DB_NAME", "postgres"),
+		DBPort:     getEnv("DB_PORT", "5432"),
+		DBHostProd: getEnv("DB_HOST_PROD", "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"),
 
 		BaseClientURL: getEnv("BASE_CLIENT_URL", "http://localhost:3000"),
 		JWTSecret:     getEnv("JWT_SECRET", ""),
@@ -60,18 +66,38 @@ func getEnv(key string, fallback string) string {
 	return fallback
 }
 
-var DB *gorm.DB
-
 func InitDatabase(env ENV) *gorm.DB {
-	if DB != nil {
-		return DB
+	if env.AppENV == "production" {
+		db, err := sql.Open("pgx", env.DBHostProd)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+			panic(err)
+		}
+
+		defer db.Close()
+
+		if err := db.Ping(); err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to ping database: %v\n", err)
+			panic(err)
+		}
+
+		gormDB, err := gorm.Open(postgres.New(postgres.Config{
+			Conn: db,
+		}))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Unable open sql using gorm: %v\n", err)
+			panic(err)
+		}
+
+		return gormDB
+	} else {
+		dns := "host=" + env.DBHost + " user=" + env.DBUser + " password=" + env.DBPass + " dbname=" + env.DBName + " port=" + env.DBPort + " sslmode=disable TimeZone=Asia/Jakarta"
+		db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+			panic(err)
+		}
+		return db
 	}
 
-	dns := "host=" + env.DBHost + " user=" + env.DBUser + " password=" + env.DBPass + " dbname=" + env.DBName + " port=" + env.DBPort + " sslmode=disable TimeZone=Asia/Jakarta"
-	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
-	if err != nil {
-		panic(err)
-	}
-	DB = db
-	return db
 }

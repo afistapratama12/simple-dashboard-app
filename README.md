@@ -19,7 +19,6 @@ Prerequisite:
 - swagger cli
 - mockery cli
 
-
 Step for running server / service:
 - change to directory `server`
 - setup env with create `.env` file, refer to file `.env.example`
@@ -48,8 +47,14 @@ Step for running docker:
 - set the environment in `client-app`, based on `/client/.env.example`
 - run `docker-compose up -d`
 
-
 Congrats, you can use the simple dashboard app
+
+## Documentation API
+
+After running the app, you can view the list of documentation API in swagger  
+the url : `{{API_HOST}}/swagger/index.html`
+
+If you running server in port 8080, `API_HOST` should be `localhost:8080`
 
 ## Unit testing
 
